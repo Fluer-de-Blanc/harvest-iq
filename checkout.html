@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Farm2Biz</title>
+  <link rel="stylesheet" href="checkout.css " />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">Farm2Biz</div>
+  <ul class="nav-links">
+    <li><a href="ehanap.html">E-Hanap</a></li>
+    <li><a href="ebili.html">E-Bili</a></li>
+    <li><a href="cart.html">Cart</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="index.html">Logout</a></li>
+  </ul>
+</nav>
+
+<main style="max-width: 600px; margin: 30px auto; background: white; padding: 20px; border-radius: 8px;">
+  <h1>Checkout</h1>
+
+  <form id="checkoutForm">
+    <label>
+      Full Name:<br />
+      <input type="text" name="name" required />
+    </label><br /><br />
+    <label>
+      Email:<br />
+      <input type="email" name="email" required />
+    </label><br /><br />
+    <label>
+      Shipping Address:<br />
+      <textarea name="address" rows="3" required></textarea>
+    </label><br /><br />
+    <label>
+      Payment Method:<br />
+      <select name="payment" required>
+        <option value="">Select payment method</option>
+        <option value="cod">Cash on Delivery</option>
+        <option value="gcash">Gcash</option>
+        <option value="credit">Credit Card</option>
+      </select>
+    </label><br /><br />
+
+    <button type="submit" style="background-color: #2e7d32; color: white; padding: 12px 18px; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+      Confirm Order
+    </button>
+  </form>
+</main>
+
+<script>
+  // Load cart from sessionStorage
+  const cart = JSON.parse(sessionStorage.getItem('checkoutCart')) || [];
+
+  if (cart.length === 0) {
+    alert('Your cart is empty! Redirecting to cart page.');
+    window.location.href = 'cart.html';
+  }
+
+  // Helper function to generate unique order ID
+  function generateOrderId() {
+    return 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+  }
+
+  document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Get form values
+    const formData = new FormData(this);
+    const name = formData.get('name').trim();
+    const email = formData.get('email').trim();
+    const address = formData.get('address').trim();
+    const payment = formData.get('payment');
+
+    if (!name || !email || !address || !payment) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    // Calculate total
+    const total = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
+
+    // Get existing orders from localStorage
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+    // Create new order
+    const orderId = generateOrderId();
+
+    const newOrder = {
+      orderId,
+      buyerName: name,
+      buyerEmail: email,
+      shippingAddress: address,
+      paymentMethod: payment,
+      items: cart,
+      total,
+      date: new Date().toISOString(),
+      status: 'Processing'
+    };
+
+    orders.push(newOrder);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // Clear checkoutCart and main cart
+    sessionStorage.removeItem('checkoutCart');
+    localStorage.removeItem('cart');
+
+    // Redirect to confirmation page with orderId query param
+    window.location.href = `confirmation.html?orderId=${orderId}`;
+  });
+</script>
+
+</body>
+</html>

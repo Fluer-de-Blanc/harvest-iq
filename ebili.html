@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E-Bili - Farm2Biz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f1f8e9, #dcedc8);
+      margin: 0;
+      padding: 0;
+      color: #2e7d32;
+    }
+    nav.navbar {
+      background-color: #388e3c;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav.navbar .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    nav.navbar ul.nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+    }
+    nav.navbar ul.nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    nav.navbar ul.nav-links li a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+    }
+    .product {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      gap: 15px;
+    }
+    .product img {
+      max-width: 150px;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+    .product-info {
+      flex-grow: 1;
+    }
+    .product-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #2e7d32;
+    }
+    .product-description {
+      margin-bottom: 8px;
+      color: #555;
+    }
+    .product-price {
+      color: #388e3c;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+    .buy-button {
+      margin-top: 10px;
+      background: #4CAF50;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background-color 0.3s ease;
+    }
+    .buy-button:hover:not(:disabled) {
+      background-color: #388e3c;
+    }
+    .buy-button.added {
+      background-color: #777;
+      cursor: default;
+    }
+    .spacer {
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">Farm2Biz</div>
+    <ul class="nav-links">
+      <li><a href="ehanap.html">E-Hanap</a></li>
+      <li><a href="ebili.html">E-Bili</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="checkbook.html">track</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="index.html">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="spacer"></div>
+
+<main>
+  <h1>Buy Products</h1>
+  <div id="productsContainer"></div>
+</main>
+
+<script>
+  const productsContainer = document.getElementById('productsContainer');
+  const products = JSON.parse(localStorage.getItem('products')) || [];
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  if (products.length === 0) {
+    productsContainer.innerHTML = '<p>No products available for purchase.</p>';
+  } else {
+    products.forEach((product, index) => {
+      const productDiv = document.createElement('div');
+      productDiv.className = 'product';
+
+      // Check if product already in cart by unique identifier (name or id)
+      const alreadyInCart = cart.some(p => p.name === product.name);
+
+      productDiv.innerHTML = `
+        <img src="${product.image || 'https://via.placeholder.com/150'}" alt="${product.name}" />
+        <div class="product-info">
+          <div class="product-name">${product.name}</div>
+          <div class="product-description">${product.description || ''}</div>
+          <div class="product-price">₱${parseFloat(product.price).toFixed(2)}</div>
+          <button class="buy-button ${alreadyInCart ? 'added' : ''}" ${alreadyInCart ? 'disabled' : ''} onclick="addToCart(${index}, this)">
+            ${alreadyInCart ? 'Added!' : 'Add to Cart'}
+          </button>
+        </div>
+      `;
+
+      productsContainer.appendChild(productDiv);
+    });
+  }
+
+  function addToCart(index, button) {
+    const selectedProduct = products[index];
+
+    // Check again to avoid duplicates in cart
+    if (!cart.some(p => p.name === selectedProduct.name)) {
+      cart.push(selectedProduct);
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      button.textContent = 'Added!';
+      button.disabled = true;
+      button.classList.add('added');
+      alert(`${selectedProduct.name} added to cart!`);
+    }
+  }
+</script>
+
+</body>
+</html>

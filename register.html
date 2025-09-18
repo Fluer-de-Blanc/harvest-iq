@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register - HarvestIQ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e2f0cb, #c6e377);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      margin: 0;
+    }
+
+    form {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 128, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #3c763d;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+      display: block;
+      color: #2f4f2f;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 0.6rem;
+      margin-bottom: 1.2rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #388e3c;
+    }
+
+    #message {
+      margin-top: 1rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    a {
+      display: block;
+      margin-top: 1rem;
+      text-align: center;
+      color: #2e7d32;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="registerForm">
+    <h2>Register to HarvestIQ</h2>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Enter email" required />
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Enter password" required minlength="6" />
+
+    <label for="role">I am a:</label>
+    <select id="role" required>
+      <option value="" disabled selected>Select role</option>
+      <option value="farmer">Farmer</option>
+      <option value="buyer">Buyer</option>
+    </select>
+
+    <button type="submit">Register</button>
+    <div id="message"></div>
+
+    <a href="login.html">Already have an account? Login here</a>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXEETrAmcpVBDF_Eb7QXuIPRvDv4jpa8k",
+      authDomain: "harvstiq-bec50.firebaseapp.com",
+      projectId: "harvstiq-bec50",
+      storageBucket: "harvstiq-bec50.firebasestorage.app",
+      messagingSenderId: "24002709346",
+      appId: "1:24002709346:web:dad86ba31a25318e17ce3b",
+      measurementId: "G-X8Q3DPP7GT"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const registerForm = document.getElementById('registerForm');
+    const message = document.getElementById('message');
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const role = document.getElementById('role').value;
+
+      message.textContent = '';
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await setDoc(doc(db, "users", user.uid), {
+          email,
+          role,
+          createdAt: new Date()
+        });
+
+        message.style.color = 'green';
+        message.textContent = 'Registration successful! Redirecting to login...';
+
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+
+      } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+          message.style.color = 'orange';
+          message.textContent = 'You already have an account! Redirecting to login...';
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+        } else {
+          message.style.color = 'red';
+          message.textContent = error.message;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

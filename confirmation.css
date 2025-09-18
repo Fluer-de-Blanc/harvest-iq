@@ -1,0 +1,90 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7f9fa;
+  margin: 0;
+  padding: 40px 20px; /* added some vertical padding for spacing */
+  color: #333;
+  text-align: center; /* center the container horizontally */
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto; /* horizontally center */
+  background: white;
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  text-align: left; /* keep text inside container left aligned */
+}
+
+h1 {
+  color: #2e7d32;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.order-details {
+  margin-bottom: 20px;
+}
+
+.order-info {
+  background: #e8f5e9;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 25px;
+}
+
+.order-info p {
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.items-list {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+.items-list th,
+.items-list td {
+  border: 1px solid #ccc;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.items-list th {
+  background-color: #c8e6c9;
+}
+
+.total-row td {
+  font-weight: 700;
+  background-color: #a5d6a7;
+}
+
+.track-qr {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.track-qr img {
+  max-width: 180px;
+  margin-top: 10px;
+}
+
+.home-button {
+  display: block;
+  margin: 30px auto 0;
+  padding: 14px 30px;
+  background-color: #2e7d32;
+  color: white;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  width: fit-content;
+  transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #276426;
+}

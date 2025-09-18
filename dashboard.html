@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Farm2Biz Farmer Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f0f4f7;
+    }
+    nav.navbar {
+      background: #1b5e20;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav.navbar .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    nav.navbar ul {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+    nav.navbar ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    nav.navbar ul li a:hover {
+      text-decoration: underline;
+    }
+    main {
+      padding: 20px;
+      max-width: 600px;
+      margin: 30px auto;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    /* Chat container */
+    .chat-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+      max-width: 100%;
+      margin-bottom: 40px;
+    }
+    .chat-header {
+      background-color: #1b5e20;
+      color: white;
+      padding: 15px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      text-align: center;
+    }
+    .messages {
+      flex-grow: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #d0f0c0;
+    }
+    .message {
+      max-width: 75%;
+      margin-bottom: 15px;
+      padding: 10px 15px;
+      border-radius: 15px;
+      font-size: 0.95rem;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+    .message.farmer {
+      background-color: #a5d6a7;
+      color: #1b5e20;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
+    .message.admin {
+      background-color: #1b5e20;
+      color: white;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    /* Product message style */
+    .message.product {
+      background-color: #f1f8e9;
+      border: 1px solid #aed581;
+      color: #33691e;
+      align-self: center;
+    }
+    .message.product img {
+      max-width: 120px;
+      margin-top: 8px;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 10px 15px;
+      border-top: 1px solid #ccc;
+      background: white;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      gap: 10px;
+    }
+    .input-area input {
+      flex-grow: 1;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      outline: none;
+    }
+    .input-area button {
+      background-color: #1b5e20;
+      border: none;
+      color: white;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .input-area button:hover {
+      background-color: #174d17;
+    }
+
+    /* Product form styles */
+    #productForm {
+      max-width: 600px;
+      margin: 0 auto 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    #productForm h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    #productForm label {
+      font-weight: 600;
+    }
+    #productForm input[type="text"],
+    #productForm input[type="number"],
+    #productForm input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    #productForm button {
+      background-color: #1b5e20;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #productForm button:hover {
+      background-color: #174d17;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">Farm2Biz Farmer</div>
+  <ul class="nav-links">
+    <li><a href="admin.html">Admin Dashboard</a></li>
+    <li><a href="index.html">Logout</a></li>
+  </ul>
+</nav>
+
+<main>
+  <h1>Farmer Chat Panel</h1>
+  <p>Send your messages to the admin.</p>
+
+  <!-- Product sending form -->
+  <form id="productForm">
+    <h2>Send Product Info</h2>
+    <label for="productName">Product Name:</label>
+    <input type="text" id="productName" required />
+
+    <label for="productDescription">Description:</label>
+    <input type="text" id="productDescription" placeholder="Optional" />
+
+    <label for="productPrice">Price (₱):</label>
+    <input type="number" id="productPrice" required min="0" step="0.01" />
+
+    <label for="productLocation">Location:</label>
+    <input type="text" id="productLocation" required />
+
+    <label for="productImage">Upload Image:</label>
+    <input type="file" id="productImage" accept="image/*" />
+
+    <button type="submit">Send Product</button>
+  </form>
+
+  <!-- Chat container -->
+  <div class="chat-container">
+    <div class="chat-header">Farmer Chat</div>
+    <div class="messages" id="messages"></div>
+
+    <div class="input-area">
+      <input type="text" id="messageInput" placeholder="Type your message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+</main>
+
+<script>
+  const messagesEl = document.getElementById('messages');
+  const messageInput = document.getElementById('messageInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  // Product form elements
+  const productForm = document.getElementById('productForm');
+  const productName = document.getElementById('productName');
+  const productDescription = document.getElementById('productDescription');
+  const productPrice = document.getElementById('productPrice');
+  const productLocation = document.getElementById('productLocation');
+  const productImageInput = document.getElementById('productImage');
+
+  const CHAT_KEY = 'farm2biz_chat';
+  let chatHistory = JSON.parse(localStorage.getItem(CHAT_KEY)) || [];
+
+  function renderMessages() {
+    messagesEl.innerHTML = '';
+    chatHistory.forEach(msg => {
+      const div = document.createElement('div');
+      div.classList.add('message');
+
+      if(msg.type === 'product') {
+        div.classList.add('product');
+        div.innerHTML = `
+          <strong>Product Name:</strong> ${msg.product.name}<br>
+          <strong>Description:</strong> ${msg.product.description || 'N/A'}<br>
+          <strong>Price:</strong> ₱${msg.product.price}<br>
+          <strong>Location:</strong> ${msg.product.location || 'N/A'}<br>
+          ${msg.product.image ? `<img src="${msg.product.image}" alt="product image" />` : ''}
+        `;
+      } else {
+        div.classList.add(msg.sender);
+        div.textContent = msg.text;
+      }
+
+      messagesEl.appendChild(div);
+    });
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function saveChat() {
+    localStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory));
+  }
+
+  function sendMessage() {
+    const text = messageInput.value.trim();
+    if(!text) return;
+
+    chatHistory.push({ sender: 'farmer', type: 'text', text, timestamp: Date.now() });
+    saveChat();
+    renderMessages();
+
+    messageInput.value = '';
+    messageInput.focus();
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+
+  messageInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // Handle product form submission
+  productForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Convert image file to base64 if uploaded
+    let imageBase64 = '';
+    if (productImageInput.files.length > 0) {
+      imageBase64 = await toBase64(productImageInput.files[0]);
+    }
+
+    const productMessage = {
+      sender: 'farmer',
+      type: 'product',
+      product: {
+        name: productName.value.trim(),
+        description: productDescription.value.trim() || 'N/A',
+        price: Number(productPrice.value),
+        location: productLocation.value.trim(),
+        image: imageBase64
+      },
+      timestamp: Date.now()
+    };
+
+    chatHistory.push(productMessage);
+    saveChat();
+    renderMessages();
+
+    productForm.reset();
+  });
+
+  // Convert file to base64 string helper
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  // Poll for new chat updates every 2 seconds to sync with admin
+  setInterval(() => {
+    const latestChat = JSON.parse(localStorage.getItem(CHAT_KEY)) || [];
+    if(JSON.stringify(latestChat) !== JSON.stringify(chatHistory)) {
+      chatHistory = latestChat;
+      renderMessages();
+    }
+  }, 2000);
+
+  renderMessages();
+</script>
+
+</body>
+</html>

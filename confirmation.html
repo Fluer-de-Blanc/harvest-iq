@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Confirmation</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <link rel="stylesheet" href="confirmation.css" />
+
+  
+</head>
+<body>
+  <h1>Order Confirmation</h1>
+  <div id="order-details"></div>
+  <div>
+    <h3>Track your order</h3>
+    <canvas id="qr-code"></canvas>
+  </div>
+
+  <script>
+    // Helper to get query params
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const orderId = getQueryParam('orderId');
+    if (!orderId) {
+      document.getElementById('order-details').textContent = 'No order ID found.';
+    } else {
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const order = orders.find(o => o.orderId === orderId);
+      if (!order) {
+        document.getElementById('order-details').textContent = 'Order not found.';
+      } else {
+        // Display order details
+        const detailsDiv = document.getElementById('order-details');
+        detailsDiv.innerHTML = `
+          <p><strong>Order ID:</strong> ${order.orderId}</p>
+          <p><strong>Buyer:</strong> ${order.buyerEmail}</p>
+          <p><strong>Date:</strong> ${new Date(order.date).toLocaleString()}</p>
+          <p><strong>Status:</strong> ${order.status}</p>
+          <h3>Items:</h3>
+          <ul>
+            ${order.items.map(item => `<li>${item.name} - ₱${item.price} x ${item.quantity || 1}</li>`).join('')}
+          </ul>
+          <p><strong>Total:</strong> ₱${order.total.toFixed(2)}</p>
+        `;
+
+        // Generate QR code for tracking
+        QRCode.toCanvas(document.getElementById('qr-code'), order.orderId, function (error) {
+          if (error) console.error(error);
+          console.log('QR code generated!');
+        });
+      }
+    }
+  </script>
+</body>
+</html>

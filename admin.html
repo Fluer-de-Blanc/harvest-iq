@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HarvestIQ Admin Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #e2f0cb, #c6e377);
+    }
+
+    nav.navbar {
+      background: #388e3c;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav.navbar .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+
+    nav.navbar ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+
+    nav.navbar ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    nav.navbar ul li a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1, h2 {
+      color: #2e7d32;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #444;
+      margin-bottom: 1.5rem;
+    }
+
+    .chat-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .messages {
+      flex-grow: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background: #f1f8e9;
+    }
+
+    .message {
+      max-width: 75%;
+      margin-bottom: 1rem;
+      padding: 0.7rem 1rem;
+      border-radius: 15px;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    .message.admin {
+      background-color: #4CAF50;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
+
+    .message.farmer {
+      background-color: #c8e6c9;
+      color: #2e7d32;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 1rem;
+      background: white;
+      border-top: 1px solid #ccc;
+      gap: 10px;
+    }
+
+    .input-area input {
+      flex-grow: 1;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .input-area button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      border-radius: 25px;
+      padding: 0.8rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .input-area button:hover {
+      background-color: #388e3c;
+    }
+
+    form#uploadForm {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    form#uploadForm label {
+      font-weight: 600;
+      color: #2e7d32;
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    form#uploadForm input[type="text"],
+    form#uploadForm input[type="number"],
+    form#uploadForm input[type="file"] {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    form#uploadForm button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    form#uploadForm button:hover {
+      background-color: #388e3c;
+    }
+
+    #statusMsg {
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    #imagePreview {
+      max-width: 100%;
+      max-height: 150px;
+      margin-top: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    #productList > div {
+      background: #fff;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    #productList button {
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">HarvestIQ Admin</div>
+  <ul>
+    <li><a href="index.html">Logout</a></li>
+  </ul>
+</nav>
+
+<main>
+  <h1>Admin Dashboard</h1>
+  <p>Welcome! Manage chat and products here.</p>
+
+  <div class="chat-container">
+    <div class="chat-header">Admin Chat</div>
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <input type="text" id="messageInput" placeholder="Type your admin message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <h2>Upload New Product</h2>
+  <form id="uploadForm">
+    <label for="productName">Product Name *</label>
+    <input type="text" id="productName" required />
+
+    <label for="description">Description</label>
+    <input type="text" id="description" />
+
+    <label for="price">Price *</label>
+    <input type="number" id="price" min="0" step="0.01" required />
+
+    <label for="imageFile">Product Image *</label>
+    <input type="file" id="imageFile" accept="image/*" required />
+    <img id="imagePreview" src="" alt="Image preview" />
+
+    <button type="submit">Upload Product</button>
+    <div id="statusMsg"></div>
+  </form>
+
+  <h2>Uploaded Products</h2>
+  <div id="productList"></div>
+</main>
+
+<script>
+  const messagesEl = document.getElementById('messages');
+  const adminInputEl = document.getElementById('messageInput');
+  const sendAdminBtn = document.getElementById('sendBtn');
+  const uploadForm = document.getElementById('uploadForm');
+  const statusMsg = document.getElementById('statusMsg');
+  const imageFileInput = document.getElementById('imageFile');
+  const imagePreview = document.getElementById('imagePreview');
+
+  const CHAT_KEY = 'farm2biz_chat';
+  const PRODUCTS_KEY = 'products';
+
+  let chatHistory = JSON.parse(localStorage.getItem(CHAT_KEY)) || [];
+  let products = JSON.parse(localStorage.getItem(PRODUCTS_KEY)) || [];
+
+  function renderMessages() {
+    messagesEl.innerHTML = '';
+    chatHistory.forEach(msg => {
+      const div = document.createElement('div');
+      div.classList.add('message', msg.sender);
+      div.textContent = msg.text;
+      messagesEl.appendChild(div);
+    });
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function saveChat() {
+    localStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory));
+  }
+
+  sendAdminBtn.addEventListener('click', () => {
+    const text = adminInputEl.value.trim();
+    if (!text) return;
+    chatHistory.push({ sender: 'admin', type: 'text', text, timestamp: Date.now() });
+    saveChat();
+    renderMessages();
+    adminInputEl.value = '';
+  });
+
+  adminInputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendAdminBtn.click();
+    }
+  });
+
+  setInterval(() => {
+    const latestChat = JSON.parse(localStorage.getItem(CHAT_KEY)) || [];
+    if (JSON.stringify(latestChat) !== JSON.stringify(chatHistory)) {
+      chatHistory = latestChat;
+      renderMessages();
+    }
+  }, 2000);
+
+  renderMessages();
+
+  imageFileInput.addEventListener('change', () => {
+    const file = imageFileInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+    }
+  });
+
+  uploadForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const name = document.getElementById('productName').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const price = document.getElementById('price').value.trim();
+    const file = imageFileInput.files[0];
+
+    if (!name || !price || !file) {
+      statusMsg.style.color = 'red';
+      statusMsg.textContent = 'Please fill in all required fields.';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const base64Image = event.target.result;
+      const newProduct = { name, description, price, image: base64Image };
+      products.push(newProduct);
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+      statusMsg.style.color = 'green';
+      statusMsg.textContent = `Product "${name}" uploaded successfully!`;
+      uploadForm.reset();
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+      renderProductList();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function renderProductList() {
+    const productListEl = document.getElementById('productList');
+    productListEl.innerHTML = '';
+    if (products.length === 0) {
+      productListEl.innerHTML = '<p>No products uploaded yet.</p>';
+      return;
+    }
+    products.forEach((product, index) => {
+      const productEl = document.createElement('div');
+      productEl.innerHTML = `
+        <h3>${product.name}</h3>
+        <p><strong>Description:</strong> ${product.description || 'N/A'}</p>
+        <p><strong>Price:</strong> $${product.price}</p>
+        <img src="${product.image}" alt="${product.name}" style="max-width: 120px; border-radius: 8px; margin-top: 10px;" />
+        <button onclick="deleteProduct(${index})">Delete</button>
+      `;
+      productListEl.appendChild(productEl);
+    });
+  }
+
+  function deleteProduct(index) {
+    if (confirm('Are you sure you want to delete this product?')) {
+      products.splice(index, 1);
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+      renderProductList();
+    }
+  }
+
+  renderProductList();
+</script>
+
+</body>
+</html>

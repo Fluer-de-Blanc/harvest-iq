@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Details</title>
+    <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f1f8e9, #dcedc8);
+      margin: 0;
+      padding: 0;
+      color: #2e7d32;
+    }
+    nav.navbar {
+      background-color: #388e3c;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav.navbar .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    nav.navbar ul.nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+    }
+    nav.navbar ul.nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    nav.navbar ul.nav-links li a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+    }
+    .product {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      gap: 15px;
+    }
+    .product img {
+      max-width: 150px;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+    .product-info {
+      flex-grow: 1;
+    }
+    .product-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #2e7d32;
+    }
+    .product-description {
+      margin-bottom: 8px;
+      color: #555;
+    }
+    .product-price {
+      color: #388e3c;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+    .buy-button {
+      margin-top: 10px;
+      background: #4CAF50;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background-color 0.3s ease;
+    }
+    .buy-button:hover:not(:disabled) {
+      background-color: #388e3c;
+    }
+    .buy-button.added {
+      background-color: #777;
+      cursor: default;
+    }
+    .spacer {
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Farm2Biz</div>
+            <ul class="nav-links">
+                <li><a href="ehanap.html">E-Hanap</a></li>
+                <li><a href="ebili.html">E-Bili</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="index.html">Logout</a></li>
+            </ul>
+    </nav>
+    <h2>Checkbook</h2>
+    <form id="checkbookForm">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        <label for="checkNumber">Check #:</label>
+        <input type="text" id="checkNumber" name="checkNumber" required>
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required>
+        <label for="debit">Debit:</label>
+        <input type="number" id="debit" name="debit" step="0.01">
+        <label for="credit">Credit:</label>
+        <input type="number" id="credit" name="credit" step="0.01">
+        <button type="submit">Add Entry</button>
+    </form>
+
+    <table id="checkbookTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Check #</th>
+                <th>Description</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div class="tracker">
+        <h3>Parcel Tracker</h3>
+        <label for="trackingNo">Tracking Number:</label>
+        <input type="text" id="trackingNo" placeholder="e.g. PH26315885483D">
+        <button type="button" onclick="loadTracking()">Track</button>
+        <div id="trackingInfo"></div>
+        <img id="qrImage" alt="Tracking QR Code" style="display:none; max-width:200px;">
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const date = params.get('date');
+    const desc = params.get('desc');
+    const amount = params.get('amount');
+
+    if (date) document.getElementById('date').value = date;
+    if (desc) document.getElementById('description').value = desc;
+    if (amount) {
+        document.getElementById('credit').value = amount;
+        document.getElementById('debit').value = ''; // assume it's a credit
+    }
+});
+        let balance = 0;
+        document.getElementById('checkbookForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const date = document.getElementById('date').value;
+            const checkNumber = document.getElementById('checkNumber').value;
+            const description = document.getElementById('description').value;
+            const debit = parseFloat(document.getElementById('debit').value) || 0;
+            const credit = parseFloat(document.getElementById('credit').value) || 0;
+            balance += credit - debit;
+            const table = document.getElementById('checkbookTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${date}</td>
+                <td>${checkNumber}</td>
+                <td>${description}</td>
+                <td>${debit.toFixed(2)}</td>
+                <td>${credit.toFixed(2)}</td>
+                <td>${balance.toFixed(2)}</td>
+            `;
+            document.getElementById('checkbookForm').reset();
+        });
+
+        async function loadTracking() {
+            const trackingNo = document.getElementById('trackingNo').value.trim();
+            if (!trackingNo) return alert("Enter a tracking number");
+
+            try {
+                const res = await fetch(`http://localhost:8000/track/${trackingNo}`);
+                if (!res.ok) throw new Error("Tracking not found");
+                const data = await res.json();
+
+                document.getElementById('trackingInfo').innerHTML = `
+                    <p><strong>Status:</strong> ${data.status}</p>
+                    <p><strong>Provider:</strong> ${data.provider}</p>
+                    <p><strong>ETA:</strong> ${data.eta.start} - ${data.eta.end}</p>
+                    <p><strong>Latest Update:</strong> ${data.latest_update.description || ''} (${data.latest_update.timestamp || ''})</p>
+                `;
+
+                const qrUrl = `http://localhost:8000/track/${trackingNo}/qr`;
+                const qrImg = document.getElementById('qrImage');
+                qrImg.src = qrUrl;
+                qrImg.style.display = 'block';
+
+            } catch (err) {
+                document.getElementById('trackingInfo').innerHTML = `<p style="color:red;">${err.message}</p>`;
+                document.getElementById('qrImage').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

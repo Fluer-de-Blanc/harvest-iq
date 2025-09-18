@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Farm2Biz | Home</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+    }
+
+    body {
+      background-image: url('pci2.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* subtle dark overlay on entire background for readability */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 0;
+    }
+
+    nav.navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(58, 125, 68, 0.7);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  font-weight: 600;
+  z-index: 10;
+  font-size: 1rem;
+}
+
+
+    nav.navbar .logo {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+      cursor: default;
+    }
+
+    nav.navbar .nav-links {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    nav.navbar .nav-links li {
+      margin-left: 25px;
+    }
+
+    nav.navbar .nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    nav.navbar .nav-links li a:hover {
+      color: #90ee90;
+    }
+
+    /* Hero section styling */
+    section.hero-section {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+      margin-top: 70px;
+      position: relative;
+      z-index: 5;
+    }
+
+    section.hero-section h1 {
+      font-size: 3.5rem;
+      margin-bottom: 0.4em;
+      font-weight: 900;
+      letter-spacing: 2px;
+      /* Soft green glow shadow */
+      text-shadow: 2px 2px 8px rgba(50, 150, 50, 0.8);
+    }
+
+    section.hero-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5em;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      color: #b5e7a0;
+      /* Softer green shadow */
+      text-shadow: 1px 1px 5px rgba(50, 150, 50, 0.7);
+    }
+
+    .btn {
+      background-color: #3a7d44;
+      color: white;
+      padding: 14px 35px;
+      border: none;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1.1rem;
+      box-shadow: 0 6px 12px rgba(58, 125, 68, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+
+    .btn:hover {
+      background-color: #2c5c34;
+      box-shadow: 0 10px 18px rgba(44, 92, 52, 0.7);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      section.hero-section h1 {
+        font-size: 2.3rem;
+      }
+      section.hero-section h2 {
+        font-size: 1.2rem;
+      }
+      nav.navbar {
+        padding: 10px 20px;
+      }
+      nav.navbar .nav-links li {
+        margin-left: 15px;
+      }
+      .btn {
+        padding: 12px 28px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">Farm2Biz</div>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero-section">
+    <h1>Welcome to Farm2Biz</h1>
+    <h2>Connecting Farmers, Empowering Communities</h2>
+    <a href="about.html" class="btn">TELL ME MORE</a>
+  </section>
+
+</body>
+</html>

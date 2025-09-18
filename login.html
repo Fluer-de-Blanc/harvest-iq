@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - HarvestIQ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e2f0cb, #c6e377);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      margin: 0;
+    }
+
+    form {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 128, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #3c763d;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+      display: block;
+      color: #2f4f2f;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-bottom: 1.2rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #388e3c;
+    }
+
+    #message {
+      margin-top: 1rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    a {
+      display: block;
+      margin-top: 1rem;
+      text-align: center;
+      color: #2e7d32;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="loginForm">
+    <h2>Login to HarvestIQ</h2>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Enter email" required />
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Enter password" required minlength="6" />
+
+    <button type="submit">Login</button>
+    <div id="message"></div>
+
+    <a href="register.html">Don't have an account? Register here</a>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXEETrAmcpVBDF_Eb7QXuIPRvDv4jpa8k",
+      authDomain: "harvstiq-bec50.firebaseapp.com",
+      projectId: "harvstiq-bec50",
+      storageBucket: "harvstiq-bec50.firebasestorage.app",
+      messagingSenderId: "24002709346",
+      appId: "1:24002709346:web:dad86ba31a25318e17ce3b",
+      measurementId: "G-X8Q3DPP7GT"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const loginForm = document.getElementById('loginForm');
+    const message = document.getElementById('message');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      message.textContent = '';
+      message.style.color = 'black';
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Fetch user role from Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          const role = userData.role;
+
+          message.style.color = 'green';
+          message.textContent = `Login successful! Redirecting as ${role}...`;
+
+          setTimeout(() => {
+            if (role === 'farmer') {
+              window.location.href = 'dashboard.html';
+            } else if (role === 'buyer') {
+              window.location.href = 'ehanap.html';
+            } else if (role === 'admin') {
+              window.location.href = 'admin.html';
+            } else {
+              message.style.color = 'red';
+              message.textContent = 'User role not recognized. Contact support.';
+            }
+          }, 1500);
+
+        } else {
+          message.style.color = 'red';
+          message.textContent = 'User role not found. Contact support.';
+        }
+      } catch (error) {
+        message.style.color = 'red';
+        message.textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>
