@@ -46,12 +46,14 @@
           <p><strong>Total:</strong> ₱${order.total.toFixed(2)}</p>
         `;
 
-        // Generate QR code for tracking
-        QRCode.toCanvas(document.getElementById('qr-code'), order.orderId, function (error) {
-          if (error) console.error(error);
-          console.log('QR code generated!');
-        });
-      }
+  // Generate QR code for tracking
+  const trackingUrl = `https://f9ddc76efe30.ngrok-free.app/checkbook.html?trackingNo=${order.orderId}`;
+
+  QRCode.toCanvas(document.getElementById('qr-code'), trackingUrl, function (error) {
+    if (error) console.error(error);
+    console.log('QR code generated with tracking link!');
+  });
+}
     }
   </script>
 </body>
